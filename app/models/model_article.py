@@ -5,7 +5,7 @@ from sqlalchemy import String, Text, DateTime
 import datetime
 
 class Article(Base):
-    __tablename__ = "articles"
+    __tablename__ = "article"
 
     id : Mapped[int] = mapped_column(primary_key=True, index=True)
     title : Mapped[str] = mapped_column(String(255), index=True)
