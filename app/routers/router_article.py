@@ -1,5 +1,5 @@
 # app/routers/router_article.py
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.services.service_article import ServiceArticle
 from app.schemas.schema_article import CreateArticle, UpdateArticle, ResponseArticle
 from sqlalchemy.orm import Session

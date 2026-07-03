@@ -14,7 +14,7 @@ class ServiceArticle:
     def get_article(self, db: Session, article_id: int) -> Article | None:
         return db.query(Article).filter(Article.id == article_id).first()
 
-    def get_all_articles(self, db: Session) -> list[Article]:
+    def get_all_article(self, db: Session) -> list[Article]:
         return db.query(Article).all()
 
     def update_article(self, db: Session, article_id: int, article_data: UpdateArticle) -> Article | None:
