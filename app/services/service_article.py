@@ -11,14 +11,14 @@ class ServiceArticle:
         db.refresh(db_article)
         return db_article
 
-    def get_article(self, db: Session, article_id: int) -> Article | None:
+    def get_article_by_id(self, db: Session, article_id: int) -> Article | None:
         return db.query(Article).filter(Article.id == article_id).first()
 
     def get_all_article(self, db: Session) -> list[Article]:
         return db.query(Article).all()
 
     def update_article(self, db: Session, article_id: int, article_data: UpdateArticle) -> Article | None:
-        db_article = self.get_article(db, article_id)
+        db_article = self.get_article_by_id(db, article_id)
         if db_article:
             if article_data.title is not None:
                 db_article.title = article_data.title
@@ -29,7 +29,7 @@ class ServiceArticle:
         return db_article
 
     def delete_article(self, db: Session, article_id: int) -> bool:
-        db_article = self.get_article(db, article_id)
+        db_article = self.get_article_by_id(db, article_id)
         if db_article:
             db.delete(db_article)
             db.commit()

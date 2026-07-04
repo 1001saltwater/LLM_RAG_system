@@ -4,6 +4,7 @@ from app.models.model_chunk import Chunk
 from app.schemas.schema_chunk import CreateChunk, UpdateChunk, ResponseChunk
 from datetime import datetime
 
+
 class ServiceChunk:
     def create_chunk(self, db: Session, chunk_data: CreateChunk) -> ResponseChunk:
         db_chunk = Chunk(article_id=chunk_data.article_id, content=chunk_data.content,created_time=datetime.now(),updated_time=datetime.now())
@@ -30,7 +31,7 @@ class ServiceChunk:
                 db_chunk.content = chunk_data.content
             db.commit()
             db.refresh(db_chunk)
-        return ResponseChunk(id=db_chunk.id, article_id=db_chunk.article_id, content=db_chunk.content,create_time=db_chunk.create_time,update_time=db_chunk.update_time)
+        return ResponseChunk(id=db_chunk.id, article_id=db_chunk.article_id, content=db_chunk.content,created_time=db_chunk.created_time,updated_time=db_chunk.updated_time)
 
     def delete_chunk(self, db: Session, chunk_id: int) -> ResponseChunk | None:
         db_chunk = self.get_chunk(db, chunk_id)   
