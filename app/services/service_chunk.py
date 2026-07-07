@@ -22,6 +22,9 @@ class ServiceChunk:
     def get_chunk_by_id(self, db: Session, chunk_id: int) -> ResponseChunk | None:        
         return db.query(Chunk).filter(Chunk.id == chunk_id).first()
 
+    def get_chunk_by_article_id(self, db: Session, article_id: int) -> list[ResponseChunk]:
+        return db.query(Chunk).filter(Chunk.article_id == article_id).all()
+
     def update_chunk(self, db: Session, chunk_id: int, chunk_data: UpdateChunk) -> ResponseChunk | None:
         db_chunk = self.get_chunk(db, chunk_id)
         if db_chunk:

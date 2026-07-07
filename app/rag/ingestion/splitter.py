@@ -1,3 +1,5 @@
+from app.config.config import settings
+
 class TextSplitter:
     """
     按段落切分文本。
@@ -7,8 +9,9 @@ class TextSplitter:
     同时不会截断段落。
     """
 
-    def __init__(self, max_length: int = 500):
+    def __init__(self, max_length: settings.CHUNK_SIZE, overlap: settings.CHUNK_OVERLAP):
         self.max_length = max_length
+        self.overlap = overlap
 
     def split(self, text: str) -> list[str]:
 

@@ -6,9 +6,11 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi-users[aqlalchemy]>=15.0.5",
+    "pgvector>=0.5.0",
     "psycopg2-binary>=2.9.12",
     "pydantic-settings>=2.14.2",
     "pytest>=9.1.1",
+    "sentence-transformers>=5.6.0",
     "sqlalchemy>=2.0.51",
     "uvicorn[standard]>=0.49.0",
 ]

@@ -20,7 +20,7 @@ def ingest_article(article_id: int, db: Session = Depends(get_db)):
     return pipeline.ingest(db, article_id)
 
 @router.get("/{article_id}", response_model=ResponseArticle)
-def get_article(article_id: int, db: Session = Depends(get_db)):
+def get_article_by_id(article_id: int, db: Session = Depends(get_db)):
     service_article = ServiceArticle()
     article = service_article.get_article_by_id(db, article_id)
     if not article:
@@ -32,10 +32,10 @@ def get_all_article(db: Session = Depends(get_db)):
     service_article = ServiceArticle()
     return service_article.get_all_article(db)
 
-@router.get("/article_id/{article_id}", response_model=list[ResponseArticle])
-def get_article_by_id(article_id: int, db: Session = Depends(get_db)):
-    service_article = ServiceArticle()
-    return service_article.get_article_by_id(db, article_id)
+# @router.get("/article_id/{article_id}", response_model=list[ResponseArticle])
+# def get_article_by_id(article_id: int, db: Session = Depends(get_db)):
+#     service_article = ServiceArticle()
+#     return service_article.get_article_by_id(db, article_id)
 
 @router.put("/{article_id}", response_model=ResponseArticle)
 def update_article(article_id: int, article_data: UpdateArticle, db: Session = Depends(get_db)):
