@@ -25,6 +25,11 @@ class ServiceChunk:
     def get_chunk_by_article_id(self, db: Session, article_id: int) -> list[ResponseChunk]:
         return db.query(Chunk).filter(Chunk.article_id == article_id).all()
 
+    def get_chunk_by_id_batch(self,db: Session,chunk_ids: list[int]):
+        db_chunks = (db.query(Chunk).filter(Chunk.id.in_(chunk_ids)).all())
+        chunk_map = {chunk.id: chunk for chunk in db_chunks}
+        return [ResponseChunk.model_validate(chunk_map[chunk_id]) for chunk_id in chunk_ids if chunk_id in chunk_map]
+
     def update_chunk(self, db: Session, chunk_id: int, chunk_data: UpdateChunk) -> ResponseChunk | None:
         db_chunk = self.get_chunk(db, chunk_id)
         if db_chunk:

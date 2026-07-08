@@ -6,6 +6,8 @@ from app.services.service_article import ServiceArticle
 from app.rag.ingestion.preprocessor import TextPreprocessor
 from app.rag.ingestion.splitter import TextSplitter
 from app.schemas.schema_chunk import CreateChunk
+from app.config.config import settings
+
 
 
 class IngestionPipeline:
@@ -14,7 +16,7 @@ class IngestionPipeline:
         self.chunk_service = ServiceChunk()
 
         self.preprocessor = TextPreprocessor()
-        self.splitter = TextSplitter()
+        self.splitter = TextSplitter(settings.CHUNK_SIZE, settings.CHUNK_OVERLAP)
 
     def ingest(self, db: Session, article_id: int):
         article = self.article_service.get_article_by_id(db, article_id)

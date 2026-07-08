@@ -41,6 +41,6 @@ class EmbeddingPipeline:
             )
 
         # 5. 保存数据库
-        self.vector_store.add_embedding(db,embedding_data)
+        self.vector_store.add_embedding_batch(db,embedding_data)
 
         return len(embedding_data)

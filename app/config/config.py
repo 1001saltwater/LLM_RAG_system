@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     DEVICE: str
 
     TOP_K: int
+    THRESHOLD: float
 
     VECTOR_DB: str
 
