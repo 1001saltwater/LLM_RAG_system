@@ -10,7 +10,6 @@ class EmbeddingPipeline:
     def __init__(self):
         self.chunk_service = ServiceChunk()
         self.embedding_service = ServiceEmbedding()
-        self.vector_store = VectorStore()
         self.embedder = Embedder()
 
     def embed_article(self,db: Session,article_id: int) -> int:
@@ -41,6 +40,6 @@ class EmbeddingPipeline:
             )
 
         # 5. 保存数据库
-        self.vector_store.add_embedding_batch(db,embedding_data)
-
+        self.embedding_service.create_embedding_batch(db,embedding_data)
+        
         return len(embedding_data)

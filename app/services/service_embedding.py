@@ -7,6 +7,8 @@ from app.schemas.schema_embedding import (
     CreateEmbedding,
     ResponseEmbedding,
 )
+from app.config.config import settings
+
 
 class ServiceEmbedding:
 
