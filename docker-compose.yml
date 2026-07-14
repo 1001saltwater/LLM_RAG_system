@@ -10,6 +10,9 @@ services:
 
     env_file:
       - .env
+    
+    volumes:
+      - .:/app
 
     depends_on:
       - postgres

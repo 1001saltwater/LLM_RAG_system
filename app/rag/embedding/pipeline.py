@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from app.rag.embedding.embedder import Embedder
 from app.services.service_chunk import ServiceChunk
 from app.services.service_embedding import ServiceEmbedding
-from app.rag.embedding.vector_store import VectorStore
+
 from app.schemas.schema_embedding import CreateEmbedding
 
 class EmbeddingPipeline:
