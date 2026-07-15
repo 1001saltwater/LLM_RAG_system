@@ -7,8 +7,6 @@ from app.schemas.schema_embedding import (
     CreateEmbedding,
     ResponseEmbedding,
 )
-from app.config.config import settings
-
 
 class ServiceEmbedding:
 
@@ -71,14 +69,3 @@ class ServiceEmbedding:
             is not None
         )
 
-    def similarity_search(self, db: Session, query_vector: list[float], top_k: int | None = None,) -> list[ResponseEmbedding]:
-
-        if top_k is None:
-            top_k = settings.TOP_K
-
-        db_embeddings = (db.query(Embedding).order_by(Embedding.embedding.cosine_distance(query_vector)).limit(top_k).all())
-
-        return [
-            ResponseEmbedding.model_validate(item)
-            for item in db_embeddings
-        ]

@@ -3,6 +3,7 @@ from app.config.config import settings
 from app.rag.embedding.embedder import Embedder
 from app.services.service_chunk import ServiceChunk
 from app.services.service_embedding import ServiceEmbedding
+from app.rag.embedding.vector_store import VectorStore
 
 class Retriever:
 
@@ -10,6 +11,7 @@ class Retriever:
         self.embedder = Embedder()
         self.embedding_service = ServiceEmbedding()
         self.chunk_service = ServiceChunk()
+        self.vector_store = VectorStore()
 
     def retrieve(self, db: Session, question: str, top_k: int = settings.TOP_K):
 
@@ -17,7 +19,7 @@ class Retriever:
         query_vector = self.embedder.embed(question)
 
         # 2. 相似度检索（返回 Embedding）
-        embeddings = self.embedding_service.similarity_search(
+        embeddings = self.vector_store.similarity_search(
             db=db,
             query_vector=query_vector,
             top_k=top_k
