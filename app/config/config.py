@@ -22,6 +22,17 @@ class Settings(BaseSettings):
 
     VECTOR_DB: str
 
+    LLM_MODEL: str
+    LLM_API_KEY: str
+    LLM_API_URL: str
+
+    MAX_TOKENS: int
+    TEMPERATURE: float
+
+    RERANK_MODEL: str
+    RERANK_TOP_K: int
+    RERANK_THRESHOLD: float
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",

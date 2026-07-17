@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi-users[aqlalchemy]>=15.0.5",
+    "openai>=2.45.0",
     "pgvector>=0.5.0",
     "psycopg2-binary>=2.9.12",
     "pydantic-settings>=2.14.2",
