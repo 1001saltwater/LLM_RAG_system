@@ -7,11 +7,11 @@ from datetime import datetime
 
 class ServiceChunk:
     def create_chunk(self, db: Session, chunk_data: CreateChunk) -> ResponseChunk:
-        db_chunk = Chunk(article_id=chunk_data.article_id, content=chunk_data.content,created_time=datetime.now(),updated_time=datetime.now())
+        db_chunk = Chunk(article_id=chunk_data.article_id, content=chunk_data.content,chunk_index=chunk_data.chunk_index,page_number=chunk_data.page_number,metadata=chunk_data.metadata,created_time=datetime.now(),updated_time=datetime.now())
         db.add(db_chunk)
         db.commit() 
         db.refresh(db_chunk)
-        return ResponseChunk(id=db_chunk.id, article_id=db_chunk.article_id, content=db_chunk.content,created_time=db_chunk.created_time,updated_time=db_chunk.updated_time)
+        return ResponseChunk(id=db_chunk.id, article_id=db_chunk.article_id, content=db_chunk.content,chunk_index=db_chunk.chunk_index,page_number=db_chunk.page_number,metadata=db_chunk.metadata,created_time=db_chunk.created_time,updated_time=db_chunk.updated_time)
 
     def get_chunk(self, db: Session, chunk_id: int) -> ResponseChunk | None:
         return db.query(Chunk).filter(Chunk.id == chunk_id).first()
@@ -37,14 +37,20 @@ class ServiceChunk:
                 db_chunk.article_id = chunk_data.article_id
             if chunk_data.content is not None:
                 db_chunk.content = chunk_data.content
+            if chunk_data.chunk_index is not None:
+                db_chunk.chunk_index = chunk_data.chunk_index
+            if chunk_data.page_number is not None:
+                db_chunk.page_number = chunk_data.page_number
+            if chunk_data.metadata is not None:
+                db_chunk.metadata = chunk_data.metadata
             db.commit()
             db.refresh(db_chunk)
-        return ResponseChunk(id=db_chunk.id, article_id=db_chunk.article_id, content=db_chunk.content,created_time=db_chunk.created_time,updated_time=db_chunk.updated_time)
+        return ResponseChunk(id=db_chunk.id, article_id=db_chunk.article_id, content=db_chunk.content,chunk_index=db_chunk.chunk_index,page_number=db_chunk.page_number,metadata=db_chunk.metadata,created_time=db_chunk.created_time,updated_time=db_chunk.updated_time)
 
     def delete_chunk(self, db: Session, chunk_id: int) -> ResponseChunk | None:
         db_chunk = self.get_chunk(db, chunk_id)   
         if db_chunk:
             db.delete(db_chunk)
             db.commit()
-            return ResponseChunk(id=db_chunk.id, article_id=db_chunk.article_id, content=db_chunk.content,created_time=db_chunk.created_time,updated_time=db_chunk.updated_time)
+            return ResponseChunk(id=db_chunk.id, article_id=db_chunk.article_id, content=db_chunk.content,chunk_index=db_chunk.chunk_index,page_number=db_chunk.page_number,metadata=db_chunk.metadata,created_time=db_chunk.created_time,updated_time=db_chunk.updated_time)
         return None
