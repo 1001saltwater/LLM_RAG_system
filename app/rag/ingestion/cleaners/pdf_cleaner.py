@@ -2,9 +2,6 @@ import re
 from langchain_core.documents import Document
 
 class PDFCleaner:
-    def __init__(self):
-        self.pdf_loader = PDFLoader()
-
     def clean(self, documents: list) -> list:
 
         cleaned_documents = []

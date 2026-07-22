@@ -38,7 +38,7 @@ class ServiceArticle:
             f.write(file_bytes)
 
         article_title = Path(filename).stem
-        return self.create_article(db, CreateArticle(title=article_title, file_name=filename, file_size=len(file_bytes), storage_path=str(storage_path)))
+        return self.create_article(db, CreateArticle(file_name=filename, file_size=len(file_bytes), storage_path=str(storage_path)))
 
     def get_article_by_id(self, db: Session, article_id: int) -> Article | None:
         return db.query(Article).filter(Article.id == article_id).first()

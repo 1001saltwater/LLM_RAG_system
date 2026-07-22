@@ -29,7 +29,16 @@ class IngestionPipeline:
 
         chunks = self.splitter.split(clean_text)
 
-        for chunk_index, content in enumerate(chunks):
-            self.chunk_service.create_chunk(db=db, chunk_data=CreateChunk(article_id=article_id, content=content, chunk_index=chunk_index, page_number=1, metadata={"article_id": article_id}))
+        chunks_data = [
+            CreateChunk(
+                article_id=article_id,
+                content=content,
+                chunk_index=chunk_index,
+                page_number=1,
+                chunk_metadata={"article_id": article_id},
+            )
+            for chunk_index, content in enumerate(chunks)
+        ]
+        self.chunk_service.create_chunks_batch(db=db, chunks_data=chunks_data)
         
         return len(chunks)

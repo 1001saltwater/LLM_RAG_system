@@ -1,5 +1,5 @@
 # app/routers/router_article.py
-from app.rag.ingestion.pipeline.pipeline import IngestionPipeline
+from app.rag.ingestion.pipeline.langchain_pipeline import IngestionPipeline
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from app.services.service_article import ServiceArticle
 from app.schemas.schema_article import CreateArticle, UpdateArticle, ResponseArticle, UploadPDFResponse
