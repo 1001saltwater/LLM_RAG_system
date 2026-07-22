@@ -9,6 +9,13 @@ class SearchRequest(BaseModel):
     question: str = Field(min_length=1)
     top_k: int = Field(default=settings.TOP_K, ge=1, le=100)
     max_distance: float = Field(default=settings.THRESHOLD, ge=0.0, le=2.0)
+    rerank: bool = True
+    rerank_top_k: int = Field(default=settings.RERANK_TOP_K, ge=1, le=100)
+    rerank_threshold: float | None = Field(
+        default=settings.RERANK_THRESHOLD,
+        ge=0.0,
+        le=1.0,
+    )
 
     @field_validator("question")
     @classmethod
@@ -27,6 +34,7 @@ class SearchResult(BaseModel):
     page_number: int
     chunk_metadata: dict[str, Any]
     distance: float
+    rerank_score: float | None = None
 
 
 class SearchResponse(BaseModel):

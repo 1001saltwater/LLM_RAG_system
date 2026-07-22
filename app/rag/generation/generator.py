@@ -1,8 +1,8 @@
 from app.rag.generation.prompt import Prompt
 from app.rag.generation.LLM import LLM
 from app.config.config import settings
-from app.database.session import sessionmaker
 from app.rag.retrieval.retriever import Retriever
+from sqlalchemy.orm import Session
 
 
 
@@ -11,11 +11,10 @@ class Generator:
         self.prompt = Prompt()
         self.llm = LLM()
         self.retriever = Retriever()
-        self.db = sessionmaker()
 
-    def generate(self, question: str) -> str:
+    def generate(self, db: Session, question: str) -> str:
         chunks = self.retriever.retrieve(
-            db=self.db,
+            db=db,
             question=question,
             top_k=settings.TOP_K
         )

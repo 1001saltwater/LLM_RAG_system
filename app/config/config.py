@@ -28,9 +28,12 @@ class Settings(BaseSettings):
     LLM_MODEL: str
     LLM_API_KEY: str
     LLM_API_URL: str
+    LLM_TIMEOUT_SECONDS: float = 60.0
+    LLM_MAX_RETRIES: int = 2
 
     MAX_TOKENS: int
     TEMPERATURE: float
+    RAG_MAX_CONTEXT_CHARS: int = 6000
 
     RERANK_MODEL: str
     RERANK_TOP_K: int
