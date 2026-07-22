@@ -2,6 +2,7 @@
 
 from sqlalchemy.orm import Session
 
+from app.models.model_chunk import Chunk
 from app.models.model_embedding import Embedding
 from app.schemas.schema_embedding import (
     CreateEmbedding,
@@ -18,8 +19,12 @@ class ServiceEmbedding:
         )
 
         db.add(db_embedding)
-        db.commit()
-        db.refresh(db_embedding)
+        try:
+            db.commit()
+            db.refresh(db_embedding)
+        except Exception:
+            db.rollback()
+            raise
 
         return ResponseEmbedding.model_validate(db_embedding)
 
@@ -33,7 +38,13 @@ class ServiceEmbedding:
             )
             db_embeddings.append(db_embedding)
         db.add_all(db_embeddings)
-        db.commit()
+        try:
+            db.commit()
+            for db_embedding in db_embeddings:
+                db.refresh(db_embedding)
+        except Exception:
+            db.rollback()
+            raise
 
         return [ResponseEmbedding.model_validate(db_embedding) for db_embedding in db_embeddings]
 
@@ -48,6 +59,14 @@ class ServiceEmbedding:
 
         return ResponseEmbedding.model_validate(db_embedding)
 
+    def count_by_article_id(self, db: Session, article_id: int) -> int:
+        return (
+            db.query(Embedding)
+            .join(Chunk, Embedding.chunk_id == Chunk.id)
+            .filter(Chunk.article_id == article_id)
+            .count()
+        )
+
     def delete_embedding(self,db: Session,chunk_id: int) -> bool:
 
         db_embedding = (
@@ -58,7 +77,11 @@ class ServiceEmbedding:
             return False
 
         db.delete(db_embedding)
-        db.commit()
+        try:
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise
 
         return True
 

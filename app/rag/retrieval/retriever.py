@@ -1,45 +1,40 @@
 from sqlalchemy.orm import Session
+
 from app.config.config import settings
 from app.rag.embedding.embedder import Embedder
-from app.services.service_chunk import ServiceChunk
-from app.services.service_embedding import ServiceEmbedding
 from app.rag.embedding.vector_store import VectorStore
-from app.rag.rerank.reranker import Reranker
+from app.schemas.schema_search import SearchResult
 
 
 class Retriever:
+    def __init__(
+        self,
+        embedder: Embedder | None = None,
+        vector_store: VectorStore | None = None,
+    ):
+        self.embedder = embedder or Embedder()
+        self.vector_store = vector_store or VectorStore()
 
-    def __init__(self):
-        self.embedder = Embedder()
-        self.embedding_service = ServiceEmbedding()
-        self.chunk_service = ServiceChunk()
-        self.vector_store = VectorStore()
-        self.reranker = Reranker()
+    def retrieve(
+        self,
+        db: Session,
+        question: str,
+        top_k: int = settings.TOP_K,
+        max_distance: float = settings.THRESHOLD,
+    ) -> list[SearchResult]:
+        question = question.strip()
+        if not question:
+            raise ValueError("question must not be blank")
 
-    def retrieve(self, db: Session, question: str, top_k: int = settings.TOP_K):
+        query_vector = self.embedder.embed_query(question)
+        if len(query_vector) != settings.EMBEDDING_DIM:
+            raise RuntimeError(
+                "Query embedding dimension does not match the database dimension"
+            )
 
-        # 1. 问题生成向量
-        query_vector = self.embedder.embed(question)
-
-        # 2. 相似度检索（返回 Embedding）
-        embeddings = self.vector_store.similarity_search(
+        return self.vector_store.similarity_search(
             db=db,
             query_vector=query_vector,
-            top_k=top_k
+            top_k=top_k,
+            max_distance=max_distance,
         )
-
-        chunk_ids = [embedding.chunk_id for embedding in embeddings]
-
-        chunks = self.chunk_service.get_chunk_by_id_batch(db, chunk_ids)
-
-        documents = [chunk.content for chunk in chunks]
-        reranked_documents = self.reranker.rerank(question, documents)
-
-        result = []
-        for item in reranked_documents:
-            for chunk in chunks:
-                if chunk.content == item:
-                    result.append(chunk)
-                    break
-
-        return result

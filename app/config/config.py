@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     DATABASE_NAME: str
     DATABASE_USER: str
     DATABASE_PASSWORD: str
-    
+
     PDF_STORAGE_DIRECTORY: str
     MAX_PDF_SIZE_BYTES: int
     CHUNK_SIZE: int
@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL: str
     EMBEDDING_DIM: int
     EMBEDDING_BATCH_SIZE: int
+    EMBEDDING_QUERY_INSTRUCTION: str = "为这个句子生成表示以用于检索相关文章："
 
     DEVICE: str
 

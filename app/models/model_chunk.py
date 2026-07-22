@@ -1,11 +1,14 @@
 # app/models/model_article_chunks.py
 from app.models.base import Base
 from sqlalchemy.orm import mapped_column, Mapped
-from sqlalchemy import ForeignKey, Text, DateTime, JSON
+from sqlalchemy import ForeignKey, Text, DateTime, JSON, UniqueConstraint
 import datetime
 
 class Chunk(Base):
     __tablename__ = "chunk"
+    __table_args__ = (
+        UniqueConstraint("article_id", "chunk_index", name="uq_chunk_article_index"),
+    )
 
     id : Mapped[int] = mapped_column(primary_key=True, index=True)
     article_id : Mapped[int] = mapped_column(ForeignKey("article.id"), index=True)

@@ -18,12 +18,14 @@ class ResponseEmbedding(BaseEmbedding):
 
     model_config = ConfigDict(from_attributes=True)
 
-    # @field_validator('embedding', mode='before')
-    # @classmethod
-    # def convert_vector_to_list(cls, v: Any) -> list[float]:
-    #     if isinstance(v, list):
-    #         return v
-    #     try:
-    #         return list(v)
-    #     except (TypeError, ValueError):
-    #         raise ValueError("embedding must be convertible to list[float]")
+    @field_validator("embedding", mode="before")
+    @classmethod
+    def convert_vector_to_list(cls, value: Any) -> list[float]:
+        if isinstance(value, list):
+            return value
+        try:
+            return list(value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "embedding must be convertible to list[float]"
+            ) from exc

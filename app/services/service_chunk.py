@@ -1,4 +1,5 @@
 ﻿# app/services/service_chunk.py
+from sqlalchemy import exists, select
 from sqlalchemy.orm import Session
 from app.models.model_chunk import Chunk
 from app.schemas.schema_chunk import CreateChunk, UpdateChunk, ResponseChunk
@@ -48,15 +49,24 @@ class ServiceChunk:
 
     def get_chunk(self, db: Session, chunk_id: int) -> ResponseChunk | None:
         return db.query(Chunk).filter(Chunk.id == chunk_id).first()
-    
+
     def get_all_chunk(self, db: Session) -> list[ResponseChunk]:
         return db.query(Chunk).all()
-        
-    def get_chunk_by_id(self, db: Session, chunk_id: int) -> ResponseChunk | None:        
+
+    def get_chunk_by_id(self, db: Session, chunk_id: int) -> ResponseChunk | None:
         return db.query(Chunk).filter(Chunk.id == chunk_id).first()
 
     def get_chunk_by_article_id(self, db: Session, article_id: int) -> list[ResponseChunk]:
-        return db.query(Chunk).filter(Chunk.article_id == article_id).all()
+        return (
+            db.query(Chunk)
+            .filter(Chunk.article_id == article_id)
+            .order_by(Chunk.chunk_index)
+            .all()
+        )
+
+    def exists_by_article_id(self, db: Session, article_id: int) -> bool:
+        statement = select(exists().where(Chunk.article_id == article_id))
+        return bool(db.scalar(statement))
 
     def get_chunk_by_id_batch(self,db: Session,chunk_ids: list[int]):
         db_chunks = (db.query(Chunk).filter(Chunk.id.in_(chunk_ids)).all())
@@ -87,7 +97,7 @@ class ServiceChunk:
         return ResponseChunk.model_validate(db_chunk)
 
     def delete_chunk(self, db: Session, chunk_id: int) -> ResponseChunk | None:
-        db_chunk = self.get_chunk(db, chunk_id)   
+        db_chunk = self.get_chunk(db, chunk_id)
         if db_chunk:
             response = ResponseChunk.model_validate(db_chunk)
             db.delete(db_chunk)

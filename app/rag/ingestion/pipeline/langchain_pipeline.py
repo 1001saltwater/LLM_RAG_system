@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.rag.ingestion.cleaners.pdf_cleaner import PDFCleaner
@@ -22,6 +23,11 @@ class IngestionPipeline:
         article = self.article_service.get_article_by_id(db, article_id)
         if article is None:
             raise HTTPException(status_code=404, detail="Article not found")
+        if self.chunk_service.exists_by_article_id(db, article_id):
+            raise HTTPException(
+                status_code=409,
+                detail="Article has already been ingested",
+            )
 
         storage_path = Path(article.storage_path)
         if not storage_path.is_file():
@@ -51,5 +57,11 @@ class IngestionPipeline:
                 )
             )
 
-        self.chunk_service.create_chunks_batch(db=db, chunks_data=chunks_data)
+        try:
+            self.chunk_service.create_chunks_batch(db=db, chunks_data=chunks_data)
+        except IntegrityError as exc:
+            raise HTTPException(
+                status_code=409,
+                detail="Article has already been ingested",
+            ) from exc
         return len(chunks_data)

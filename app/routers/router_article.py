@@ -1,4 +1,5 @@
 # app/routers/router_article.py
+from app.rag.embedding.pipeline import EmbeddingPipeline
 from app.rag.ingestion.pipeline.langchain_pipeline import IngestionPipeline
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from app.services.service_article import ServiceArticle
@@ -29,7 +30,7 @@ async def upload_pdf_article(
     if not file_bytes:
         raise HTTPException(status_code=400, detail="Uploaded file is empty")
     if len(file_bytes) > settings.MAX_PDF_SIZE_BYTES:
-        raise HTTPException(status_code=400, detail=f"PDF file exceeds {settings.MAX_PDF_SIZE_BYTES / 1024 / 1024} MB limit")   
+        raise HTTPException(status_code=400, detail=f"PDF file exceeds {settings.MAX_PDF_SIZE_BYTES / 1024 / 1024} MB limit")
 
     service_article = ServiceArticle()
     article = service_article.create_article_from_pdf(
@@ -49,6 +50,11 @@ async def upload_pdf_article(
 def ingest_article(article_id: int, db: Session = Depends(get_db)):
     pipeline = IngestionPipeline()
     return pipeline.ingest(db, article_id)
+
+@router.post("/{article_id}/embed", response_model=int)
+def embed_article(article_id: int, db: Session = Depends(get_db)):
+    pipeline = EmbeddingPipeline()
+    return pipeline.embed_article(db, article_id)
 
 @router.get("/{article_id}", response_model=ResponseArticle)
 def get_article_by_id(article_id: int, db: Session = Depends(get_db)):
