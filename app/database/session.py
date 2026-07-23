@@ -1,5 +1,6 @@
 # app/database/session.py
 from collections.abc import Generator
+from contextlib import contextmanager
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -14,7 +15,8 @@ SessionLocal = sessionmaker(
     autoflush=False,
 )
 
-def get_db() -> Generator[Session, None, None]:
+@contextmanager
+def session_scope() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
@@ -23,3 +25,8 @@ def get_db() -> Generator[Session, None, None]:
         raise
     finally:
         db.close()
+
+
+def get_db() -> Generator[Session, None, None]:
+    with session_scope() as db:
+        yield db

@@ -22,6 +22,8 @@ dependencies = [
     "langchain-classic>=1.0.8",
     "langchain-openai>=1.4.0",
     "langsmith>=0.10.6",
+    "locust>=2.46.1",
+    "alembic>=1.18.5",
 ]
 
 [[tool.uv.index]]

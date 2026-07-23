@@ -1,3 +1,4 @@
+from pydantic import SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -38,6 +39,21 @@ class Settings(BaseSettings):
     RERANK_MODEL: str
     RERANK_TOP_K: int
     RERANK_THRESHOLD: float
+
+    LANGSMITH_TRACING: bool = False
+    LANGSMITH_API_KEY: SecretStr | None = None
+    LANGSMITH_PROJECT: str = "fastapi-rag-dev"
+    LANGSMITH_ENDPOINT: str = "https://api.smith.langchain.com"
+    LANGSMITH_HIDE_INPUTS: bool = False
+    LANGSMITH_HIDE_OUTPUTS: bool = False
+
+    @model_validator(mode="after")
+    def validate_langsmith_configuration(self):
+        if self.LANGSMITH_TRACING and self.LANGSMITH_API_KEY is None:
+            raise ValueError(
+                "LANGSMITH_API_KEY is required when LANGSMITH_TRACING is enabled"
+            )
+        return self
 
     model_config = SettingsConfigDict(
         env_file=".env",

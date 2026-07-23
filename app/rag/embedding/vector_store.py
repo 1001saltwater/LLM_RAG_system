@@ -1,3 +1,6 @@
+from typing import Any
+
+from langsmith import traceable
 from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
 
@@ -7,7 +10,42 @@ from app.models.model_embedding import Embedding
 from app.schemas.schema_search import SearchResult
 
 
+def sanitize_vector_search_inputs(
+    inputs: dict[str, Any],
+) -> dict[str, Any]:
+    query_vector = inputs.get("query_vector") or []
+    return {
+        "top_k": inputs.get("top_k"),
+        "max_distance": inputs.get("max_distance"),
+        "query_vector_dimension": len(query_vector),
+    }
+
+
+def summarize_vector_search_outputs(
+    outputs: Any,
+) -> dict[str, Any]:
+    if not isinstance(outputs, list):
+        return {"result": outputs}
+    return {
+        "result_count": len(outputs),
+        "results": [
+            {
+                "chunk_id": result.chunk_id,
+                "distance": result.distance,
+            }
+            for result in outputs
+            if isinstance(result, SearchResult)
+        ],
+    }
+
+
 class VectorStore:
+    @traceable(
+        name="pgvector-search",
+        run_type="retriever",
+        process_inputs=sanitize_vector_search_inputs,
+        process_outputs=summarize_vector_search_outputs,
+    )
     def similarity_search(
         self,
         db: Session,
